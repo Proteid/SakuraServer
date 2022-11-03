@@ -1,2 +1,3 @@
-# SakuraServer
-# Just a repositories for my own ygopro server.
+SakuraServer
+====
+Just a repositories for my own ygopro server. 
