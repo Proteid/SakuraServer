@@ -1,0 +1,50 @@
+--血魔 巴比龙
+function c35904975.initial_effect(c)
+	--recover
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(70780151,0))
+	e1:SetCategory(CATEGORY_RECOVER)
+	e1:SetCode(EVENT_BATTLE_DESTROYING)
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e1:SetCondition(c35904975.condition)
+	e1:SetTarget(c35904975.target)
+	e1:SetOperation(c35904975.operation)
+	c:RegisterEffect(e1)
+	--draw(battle)
+	local e2=Effect.CreateEffect(c)
+	e2:SetCode(EFFECT_UPDATE_ATTACK)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e2:SetCode(EVENT_BATTLE_DAMAGE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
+	e2:SetOperation(c35904975.atkop)
+	c:RegisterEffect(e2)
+end
+function c35904975.condition(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	return c:IsRelateToBattle() and bc:IsLocation(LOCATION_GRAVE) and bc:IsType(TYPE_MONSTER)
+end
+function c35904975.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	local dam=bc:GetAttack()
+	if dam<0 then dam=0 end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(dam)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,dam)
+end
+function c35904975.operation(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Recover(p,d,REASON_EFFECT)
+end
+function c35904975.atkop(e,tp,eg,ep,ev,re,r,rp)
+	local e3=Effect.CreateEffect(e:GetHandler())
+	e3:SetType(EFFECT_TYPE_SINGLE)
+	e3:SetCode(EFFECT_UPDATE_ATTACK)
+	e3:SetValue(ev)
+	e3:SetReset(RESET_EVENT+RESETS_STANDARD)
+	e:GetHandler():RegisterEffect(e3)
+end
